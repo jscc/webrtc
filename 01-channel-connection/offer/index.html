@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        const connection = new RTCPeerConnection();
+        const channel = connection.createDataChannel("channel");
+        channel.onmessage = (e) => console.log("刚收到的消息" + e.data);
+        channel.onopen = (e) => console.log("打开连接");
+        connection.onicecandidate = (e) => {
+            console.log("本地sdp" + JSON.stringify(lc.localDescription));
+        }
+        connection.createOffer()
+            .then((o) => {
+                connection.setLocalDescription(o);
+            })
+            .then((a) => console.log("已发送sdp到服务器"));
+        const answer = sdp;
+
+
+
+        // 本地测试的时候，需要先打开这个页面
+        // 把 标识 给 answer 后，拿到 answer 的标识后在控制台执行一下此方法
+        // 之后就可以调用 send 来发送消息了
+        function bindTarget(sdp) {
+            connection.setRemoteDescription(answer);
+        }
+
+        // channel.send('hello');
+
+    </script>
+</body>
+
+</html>

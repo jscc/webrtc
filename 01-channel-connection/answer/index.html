@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let connection = new RTCPeerConnection();
+
+        // 这里正常应该由服务器来转发，
+        // 目前是 offer 创建完成之后，直接复制过来的内容
+        // 如果要成功运行此项目， 需要手动修改 addr 的值
+        let addr = { "type": "offer", "sdp": "v=0\r\no=- 810141801647439912 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\na=extmap-allow-mixed\r\na=msid-semantic: WMS\r\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\r\nc=IN IP4 0.0.0.0\r\na=candidate:1051253951 1 udp 2113937151 c5fd9309-d585-40b4-9d82-b8fac70687f5.local 60551 typ host generation 0 network-cost 999\r\na=ice-ufrag:S4KS\r\na=ice-pwd:yl2rPA5vGbqaA35anyQp/SU9\r\na=ice-options:trickle\r\na=fingerprint:sha-256 49:67:1C:B8:FF:3D:18:FB:66:3C:8E:2F:F5:23:4D:B5:E7:FD:8E:2C:E3:00:7F:9B:EB:E9:E7:F0:84:38:D9:22\r\na=setup:actpass\r\na=mid:0\r\na=sctp-port:5000\r\na=max-message-size:262144\r\n" };
+        // let  addr = {}
+        connection.setRemoteDescription();
+        connection.ondatachannel = onChannelHandler;
+        connection.createAnswer()
+            .then(sdp => {
+                connection.setLocalDescription(sdp)
+                console.log(JSON.stringify(sdp));
+            })
+            .catch(err => console.log(err))
+
+        function onChannelHandler(ev) {
+            ev.channel.onmessage = function (data) {
+                console.log('收到消息：' + data);
+                // 回对方一个消息
+                ev.channel.send('我收到消息了');
+            }
+        }
+    </script>
+</body>
+
+</html>
